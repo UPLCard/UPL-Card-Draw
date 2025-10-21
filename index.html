@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Pack Simulator</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f7f7f7; color: #222; margin: 0; padding: 20px; }
+h1 { text-align: center; }
+button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+.card { display: inline-block; border: 1px solid #ccc; border-radius: 5px; background: white; padding: 10px; margin: 5px; width: 150px; text-align: center; }
+.result { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+</style>
+</head>
+<body>
+<h1>Custom Card Pack Simulator</h1>
+<p>Click the button below to open a 4-card pack with your custom rarity rules.</p>
+<div style="text-align:center;">
+  <button onclick="openPack()">Open Pack</button>
+</div>
+<div id="result" class="result"></div>
+
+<script>
+const rarities = {
+  'Common': ['Diana','Zoe','Julia','Astrid','Maya','Clara','Elise','Serena','Nadine','Lila'],
+  'Uncommon': ['Diana BS','Zoe BS','Julia BS','Astrid BS','Maya BS','Clara BS','Elise BS','Serena BS','Nadine BS','Lila BS'],
+  'Rare': ['Diana BDS','Zoe BDS','Julia BDS','Astrid BDS','Maya BDS','Clara BDS','Elise BDS','Serena BDS','Nadine BDS','Lila BDS'],
+  'Ultra Rare': ['Diana AA','Zoe AA','Julia AA','Astrid AA','Maya AA','Clara AA','Elise AA','Serena AA','Nadine AA','Lila AA'],
+  'Mythic Rare': ['Diana AAR','Zoe AAR','Julia AAR','Astrid AAR','Maya AAR','Clara AAR','Elise AAR','Serena AAR','Nadine AAR','Lila AAR'],
+  'Signature Rare': ['Diana AAU','Zoe AAU','Julia AAU','Astrid AAU','Maya AAU','Clara AAU','Elise AAU','Serena AAU','Nadine AAU','Lila AAU','Diana SR','Zoe SR','Julia SR','Astrid SR','Maya SR','Clara SR','Elise SR','Serena SR','Nadine SR','Lila SR']
+};
+
+function getRandomFrom(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function weightedChoice(weights) {
+  let total = Object.values(weights).reduce((a,b)=>a+b,0);
+  let r = Math.random() * total;
+  for (const [rarity, weight] of Object.entries(weights)) {
+    if (r < weight) return rarity;
+    r -= weight;
+  }
+  return 'Common';
+}
+
+function openPack() {
+  let resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = '';
+  
+  const slots = [
+    { 'Common': 100 },
+    { 'Common': 95, 'Uncommon': 5 },
+    { 'Uncommon': 80, 'Rare': 20 },
+    { 'Ultra Rare': 90, 'Mythic Rare': 9, 'Signature Rare': 1 }
+  ];
+  
+  for (let i=0; i<4; i++) {
+    const rarity = weightedChoice(slots[i]);
+    const cardName = getRandomFrom(rarities[rarity]);
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'card';
+    cardDiv.innerHTML = `<strong>${cardName}</strong><br><em>${rarity}</em>`;
+    resultDiv.appendChild(cardDiv);
+  }
+}
+</script>
+</body>
+</html>
